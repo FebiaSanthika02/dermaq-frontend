@@ -1,16 +1,18 @@
 import React, { useCallback, useRef, useState } from "react";
-import { IconCamera, IconUpload } from "./Icons";
+import { IconCamera, IconUpload, IconCameraOn } from "./Icons";
+import CameraCapture from "./CameraCapture";
 
 const MAX_MB = 10;
 
 export default function UploadZone({ onFileSelect, disabled }) {
-  const [dragging, setDragging] = useState(false);
-  const [error,    setError]    = useState("");
-  const inputRef               = useRef();
+  const [dragging,    setDragging]    = useState(false);
+  const [error,       setError]       = useState("");
+  const [cameraOpen,  setCameraOpen]  = useState(false);
+  const inputRef                       = useRef();
 
   const validate = (file) => {
     if (!file) return "Tidak ada file yang dipilih.";
-    if (!["image/jpeg","image/png","image/webp"].includes(file.type))
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type))
       return "Format tidak didukung. Gunakan JPG, PNG, atau WebP.";
     if (file.size > MAX_MB * 1024 * 1024)
       return `Ukuran file melebihi ${MAX_MB} MB.`;
@@ -31,57 +33,89 @@ export default function UploadZone({ onFileSelect, disabled }) {
   };
 
   return (
-    <div
-      onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={onDrop}
-      onClick={() => !disabled && inputRef.current?.click()}
-      className={`
-        relative flex flex-col items-center gap-5 rounded-3xl p-12 cursor-pointer
-        transition-all duration-300 select-none text-center
-        ${dragging
-          ? "bg-amber-muted drop-active"
-          : "bg-cream-100 border-2 border-dashed border-stone-200 hover:border-amber/40 hover:bg-amber-muted/30"}
-        ${disabled ? "opacity-50 pointer-events-none" : ""}
-      `}
-    >
-      <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300
-                        ${dragging ? "bg-amber/15 text-amber-dark scale-110" : "bg-stone-100 text-stone-400"}`}>
-        <IconCamera className="w-9 h-9" />
-      </div>
-
-      <div>
-        <p className="text-ink font-semibold text-base mb-1">
-          {dragging ? "Lepaskan foto di sini" : "Upload foto wajahmu"}
-        </p>
-        <p className="text-stone-400 text-sm">Seret & lepas, atau klik untuk memilih</p>
-        <p className="text-stone-300 text-xs mt-1">JPG · PNG · WebP · Maks {MAX_MB} MB</p>
-      </div>
-
-      <button
-        type="button"
-        className="btn-primary flex items-center gap-2"
-        onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
+    <>
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onDrop}
+        className={`
+          relative flex flex-col items-center gap-4 sm:gap-5
+          rounded-2xl sm:rounded-3xl
+          p-6 sm:p-10 md:p-12
+          transition-all duration-300 select-none text-center
+          ${dragging
+            ? "bg-amber-muted drop-active"
+            : "bg-cream-100 border-2 border-dashed border-stone-200 hover:border-amber/40 hover:bg-amber-muted/30"}
+          ${disabled ? "opacity-50 pointer-events-none" : ""}
+        `}
       >
-        <IconUpload className="w-4 h-4" />
-        Pilih Foto
-      </button>
+        {/* Icon */}
+        <div className={`
+          w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center
+          transition-all duration-300
+          ${dragging ? "bg-amber/15 text-amber-dark scale-110" : "bg-stone-100 text-stone-400"}
+        `}>
+          <IconCamera className="w-7 h-7 sm:w-9 sm:h-9" />
+        </div>
 
-      <div className="flex gap-3 flex-wrap justify-center">
-        {["💡 Cahaya terang", "👁 Tampak depan", "🚫 Tanpa filter"].map((t) => (
-          <span key={t} className="badge-stone">{t}</span>
-        ))}
+        {/* Text */}
+        <div>
+          <p className="text-ink font-semibold text-sm sm:text-base mb-1">
+            {dragging ? "Lepaskan foto di sini" : "Upload foto wajahmu"}
+          </p>
+          <p className="text-stone-400 text-xs sm:text-sm">
+            <span className="hidden sm:inline">Seret & lepas, atau</span>
+            <span className="sm:hidden">Tap salah satu tombol di bawah</span>
+            <span className="hidden sm:inline"> klik untuk memilih</span>
+          </p>
+          <p className="text-stone-300 text-xs mt-1">JPG · PNG · WebP · Maks {MAX_MB} MB</p>
+        </div>
+
+        {/* Action buttons — Pilih File + Buka Kamera */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+          <button
+            type="button"
+            className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
+            onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
+          >
+            <IconUpload className="w-4 h-4" />
+            Pilih Foto
+          </button>
+
+          <button
+            type="button"
+            className="btn-outline flex items-center justify-center gap-2 w-full sm:w-auto
+                       border-amber/30 text-amber-dark hover:bg-amber-muted hover:border-amber/50"
+            onClick={(e) => { e.stopPropagation(); setCameraOpen(true); }}
+          >
+            <IconCameraOn className="w-4 h-4" />
+            Buka Kamera
+          </button>
+        </div>
+
+        {/* Tips chips */}
+        <div className="flex gap-2 flex-wrap justify-center">
+          {["💡 Cahaya terang", "👁 Tampak depan", "🚫 Tanpa filter"].map((t) => (
+            <span key={t} className="badge-stone text-[11px] sm:text-xs">{t}</span>
+          ))}
+        </div>
+
+        {error && <p className="text-red-400 text-xs font-medium">{error}</p>}
+
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={(e) => handleFile(e.target.files[0])}
+        />
       </div>
 
-      {error && <p className="text-red-400 text-xs font-medium">{error}</p>}
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className="hidden"
-        onChange={(e) => handleFile(e.target.files[0])}
+      <CameraCapture
+        open={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        onCapture={handleFile}
       />
-    </div>
+    </>
   );
 }

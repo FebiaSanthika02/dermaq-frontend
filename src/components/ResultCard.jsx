@@ -33,29 +33,31 @@ export default function ResultCard({ result }) {
     <div className="space-y-4 animate-slide-up">
 
       {/* Hero */}
-      <div className="card p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <span className="label-section block mb-2">Hasil Analisis Kulit</span>
-            <h2 className={`font-serif text-3xl font-bold ${cfg.accent}`}>{result.label}</h2>
+      <div className="card p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+          <div className="min-w-0 flex-1">
+            <span className="label-section block mb-1.5 sm:mb-2">Hasil Analisis Kulit</span>
+            <h2 className={`font-serif text-2xl sm:text-3xl font-bold ${cfg.accent} truncate`}>
+              {result.label}
+            </h2>
           </div>
-          <div className="text-right">
-            <span className={`${cfg.badge}`}>{result.emoji} {result.skin_type}</span>
-            <p className="text-2xl font-bold text-ink mt-2">{result.confidence}%</p>
-            <p className="text-stone-400 text-xs">keyakinan</p>
+          <div className="text-right flex-shrink-0">
+            <span className={`${cfg.badge} text-[10px] sm:text-xs`}>{result.emoji} {result.skin_type}</span>
+            <p className="text-xl sm:text-2xl font-bold text-ink mt-1.5 sm:mt-2">{result.confidence}%</p>
+            <p className="text-stone-400 text-[10px] sm:text-xs">keyakinan</p>
           </div>
         </div>
-        <div className="h-1 bg-stone-100 rounded-full mb-4 overflow-hidden">
+        <div className="h-1 bg-stone-100 rounded-full mb-3 sm:mb-4 overflow-hidden">
           <div className={`h-full rounded-full ${cfg.bar} transition-all duration-700`}
                style={{ width: `${result.confidence}%` }} />
         </div>
-        <p className="text-stone-500 text-sm leading-relaxed">{result.description}</p>
+        <p className="text-stone-500 text-xs sm:text-sm leading-relaxed">{result.description}</p>
       </div>
 
       {/* Prob + Ingredients */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="card-sm p-5">
-          <span className="label-section block mb-3">Probabilitas</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="card-sm p-4 sm:p-5">
+          <span className="label-section block mb-2 sm:mb-3">Probabilitas</span>
           <div className="space-y-0.5">
             {probArr.map(([cls, val]) => (
               <ProbBar key={cls} label={cls} value={val}
@@ -63,13 +65,13 @@ export default function ResultCard({ result }) {
             ))}
           </div>
         </div>
-        <div className="card-sm p-5">
-          <span className="label-section flex items-center gap-1.5 mb-3">
+        <div className="card-sm p-4 sm:p-5">
+          <span className="label-section flex items-center gap-1.5 mb-2 sm:mb-3">
             <IconLeaf className="w-3.5 h-3.5" /> Bahan yang Cocok
           </span>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {result.ingredients?.map((ing, i) => (
-              <span key={i} className="badge-stone">{ing}</span>
+              <span key={i} className="badge-stone text-[10px] sm:text-xs">{ing}</span>
             ))}
           </div>
         </div>
@@ -77,16 +79,16 @@ export default function ResultCard({ result }) {
 
       {/* Tips */}
       {result.tips?.length > 0 && (
-        <div className="card p-6">
-          <span className="label-section block mb-4">💡 Rekomendasi Perawatan</span>
-          <div className="grid sm:grid-cols-2 gap-3">
+        <div className="card p-4 sm:p-6">
+          <span className="label-section block mb-3 sm:mb-4">💡 Rekomendasi Perawatan</span>
+          <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
             {result.tips.map((tip, i) => (
-              <div key={i} className="flex gap-3 items-start bg-stone-50 rounded-2xl p-3">
-                <span className={`w-6 h-6 rounded-full ${cfg.bar} flex items-center justify-center
-                                   text-white flex-shrink-0 mt-0.5`}>
+              <div key={i} className="flex gap-2.5 sm:gap-3 items-start bg-stone-50 rounded-xl sm:rounded-2xl p-2.5 sm:p-3">
+                <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full ${cfg.bar} flex items-center
+                                   justify-center text-white flex-shrink-0 mt-0.5`}>
                   <IconCheck className="w-3 h-3" />
                 </span>
-                <p className="text-stone-600 text-sm leading-snug">{tip}</p>
+                <p className="text-stone-600 text-xs sm:text-sm leading-snug">{tip}</p>
               </div>
             ))}
           </div>
