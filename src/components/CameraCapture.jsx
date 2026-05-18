@@ -32,7 +32,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
       stopStream();
 
       if (!navigator.mediaDevices?.getUserMedia) {
-        setError("Perangkat ini tidak bisa membuka kamera lewat halaman ini. Pakai “Pilih dari galeri” saja.");
+        setError("Your device can’t open the camera here—please use “Choose from gallery”.");
         return;
       }
 
@@ -56,10 +56,10 @@ export default function CameraCapture({ open, onClose, onCapture }) {
       } catch (e) {
         setError(
           e.name === "NotAllowedError"
-            ? "Akses kamera ditolak. Izinkan kamera untuk situs ini, lalu coba lagi."
+            ? "Camera access was blocked. Allow the camera for this site, then try again."
             : e.name === "NotFoundError"
-            ? "Tidak ada kamera yang terlihat di perangkat ini."
-            : "Ada kendala saat membuka kamera. Tutup lalu coba lagi.",
+            ? "No camera was found on this device."
+            : "Something went wrong opening the camera. Close and try again.",
         );
       }
     }
@@ -117,7 +117,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
         0.92,
       );
     } catch (e) {
-      setError("Foto tidak tersimpan. Tutup lalu coba lagi.");
+      setError("We couldn’t save the photo. Close and try again.");
       setShooting(false);
     }
   }
@@ -132,11 +132,11 @@ export default function CameraCapture({ open, onClose, onCapture }) {
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* ── Topbar ──────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 bg-black/60 text-white">
-        <span className="text-sm font-medium">Ambil foto wajah</span>
+        <span className="text-sm font-medium">Face photo</span>
         <button
           onClick={() => { stopStream(); onClose?.(); }}
           className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-          aria-label="Tutup"
+          aria-label="Close"
         >
           <IconX className="w-4 h-4" />
         </button>
@@ -166,7 +166,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
             ))}
             {/* Center hint */}
             <p className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-white/80 text-xs whitespace-nowrap">
-              letakkan wajah di dalam kotak
+              Center your face in the guides
             </p>
           </div>
         </div>
@@ -174,15 +174,15 @@ export default function CameraCapture({ open, onClose, onCapture }) {
         {/* Status overlays */}
         {!ready && !error && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-sm">
-            Menyiapkan tampilan…
+            Getting ready…
           </div>
         )}
         {error && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center px-6">
             <div className="bg-white rounded-2xl p-6 max-w-sm text-center">
-              <p className="text-red-600 font-semibold text-sm mb-2">Kamera tidak siap</p>
+              <p className="text-red-600 font-semibold text-sm mb-2">Camera isn’t ready</p>
               <p className="text-stone-600 text-sm">{error}</p>
-              <button onClick={onClose} className="btn-outline mt-4 text-sm">Tutup</button>
+              <button onClick={onClose} className="btn-outline mt-4 text-sm">Close</button>
             </div>
           </div>
         )}
@@ -197,7 +197,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
           disabled={!ready || shooting}
           className="w-16 h-16 rounded-full bg-white flex items-center justify-center
                      ring-4 ring-white/30 hover:ring-amber transition disabled:opacity-50"
-          aria-label="Ambil foto"
+          aria-label="Take photo"
         >
           {shooting ? (
             <svg className="w-6 h-6 animate-spin-slow text-ink" viewBox="0 0 24 24" fill="none">
@@ -214,7 +214,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
           disabled={!ready}
           className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white
                      flex items-center justify-center transition disabled:opacity-50"
-          aria-label="Ganti kamera"
+          aria-label="Switch camera"
         >
           <IconSwitchCamera />
         </button>

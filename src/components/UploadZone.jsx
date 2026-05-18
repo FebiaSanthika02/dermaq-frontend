@@ -11,11 +11,11 @@ export default function UploadZone({ onFileSelect, disabled }) {
   const inputRef                       = useRef();
 
   const validate = (file) => {
-    if (!file) return "Belum ada foto yang dipilih.";
+    if (!file) return "No photo selected.";
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type))
-      return "Mohon pilih foto seperti biasa dari galeri atau kamera telepon.";
+      return "Please choose a photo from your gallery or camera.";
     if (file.size > MAX_MB * 1024 * 1024)
-      return "Ukurannya terlalu besar. Pilih foto lain yang lebih ringan.";
+      return "This file is too large. Try a smaller photo.";
     return null;
   };
 
@@ -59,14 +59,14 @@ export default function UploadZone({ onFileSelect, disabled }) {
 
         <div>
           <p className="text-ink font-semibold text-sm sm:text-base mb-1">
-            {dragging ? "Lepaskan foto di sini" : "Tambahkan foto wajah"}
+            {dragging ? "Drop your photo here" : "Add a face photo"}
           </p>
           <p className="text-stone-400 text-xs sm:text-sm">
-            <span className="hidden sm:inline">Seret ke sini atau</span>
-            <span className="sm:hidden">Pilih salah satu cara di bawah</span>
-            <span className="hidden sm:inline"> pilih dari perangkatmu</span>
+            <span className="hidden sm:inline">Drag and drop, or </span>
+            <span className="sm:hidden">Choose an option below</span>
+            <span className="hidden sm:inline">pick from your device</span>
           </p>
-          <p className="text-stone-300 text-xs mt-1">Foto biasa dari galeri · Ukuran harus ringan</p>
+          <p className="text-stone-300 text-xs mt-1">Regular gallery photos • Keep file size small</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
@@ -76,7 +76,7 @@ export default function UploadZone({ onFileSelect, disabled }) {
             onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           >
             <IconUpload className="w-4 h-4" />
-            Pilih dari galeri
+            Choose from gallery
           </button>
 
           <button
@@ -86,12 +86,12 @@ export default function UploadZone({ onFileSelect, disabled }) {
             onClick={(e) => { e.stopPropagation(); setCameraOpen(true); }}
           >
             <IconCameraOn className="w-4 h-4" />
-            Scan kulit
+            Scan skin
           </button>
         </div>
 
         <div className="flex gap-2 flex-wrap justify-center">
-          {["Cahaya terang", "Wajah menghadap kamera", "Tanpa filter"].map((t) => (
+          {["Bright light", "Face the camera", "No filters"].map((t) => (
             <span key={t} className="badge-stone text-[11px] sm:text-xs">{t}</span>
           ))}
         </div>

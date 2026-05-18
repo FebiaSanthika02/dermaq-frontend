@@ -8,12 +8,11 @@ const SKIN_CONFIG = {
   combination: { bar: "bg-stone-500", badge: "badge-clay",  accent: "text-stone-700"   },
 };
 
-/** Nama jenis kulit untuk tampilan (tanpa istilah teknis bahasa campuran) */
-const NAMA_JENIS = {
-  dry:         "Kulit kering",
-  normal:      "Kulit normal",
-  oily:        "Kulit berminyak",
-  combination: "Kulit kombinasi",
+const SKIN_LABEL = {
+  dry:         "Dry skin",
+  normal:      "Normal skin",
+  oily:        "Oily skin",
+  combination: "Combination skin",
 };
 
 function ProbBar({ label, value, isTop, barClass }) {
@@ -26,8 +25,8 @@ function ProbBar({ label, value, isTop, barClass }) {
         <div className={`h-full rounded-full transition-all duration-700 ease-out ${isTop ? barClass : "bg-stone-200"}`}
              style={{ width: `${Math.max(value, 0.5)}%` }} />
       </div>
-      <span className={`text-xs w-9 shrink-0 text-right font-semibold ${isTop ? "text-stone-700" : "text-stone-300"}`}>
-        Sekitar {value.toFixed(0)}%
+      <span className={`text-xs w-12 shrink-0 text-right font-semibold ${isTop ? "text-stone-700" : "text-stone-300"}`}>
+        ~{value.toFixed(0)}%
       </span>
     </div>
   );
@@ -36,8 +35,8 @@ function ProbBar({ label, value, isTop, barClass }) {
 export default function ResultCard({ result }) {
   const cfg     = SKIN_CONFIG[result.skin_type] ?? SKIN_CONFIG.normal;
   const probArr = Object.entries(result.probabilities).sort((a, b) => b[1] - a[1]);
-  const judulUtama = NAMA_JENIS[result.skin_type] ?? result.label;
-  const namaSingkat = NAMA_JENIS[result.skin_type] ?? result.label;
+  const titleSkin = SKIN_LABEL[result.skin_type] ?? result.label;
+  const shortSkin = SKIN_LABEL[result.skin_type] ?? result.label;
 
   return (
     <div className="space-y-4 animate-slide-up">
@@ -45,17 +44,17 @@ export default function ResultCard({ result }) {
       <div className="card p-4 sm:p-6">
         <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
           <div className="min-w-0 flex-1">
-            <span className="label-section block mb-1.5 sm:mb-2">Ringkasan untukmu</span>
+            <span className="label-section block mb-1.5 sm:mb-2">Your summary</span>
             <h2 className={`font-serif text-2xl sm:text-3xl font-bold ${cfg.accent} leading-snug`}>
-              {judulUtama}
+              {titleSkin}
             </h2>
           </div>
           <div className="text-right flex-shrink-0">
             <span className={`${cfg.badge} text-[10px] sm:text-xs whitespace-nowrap`}>
-              {result.emoji} {namaSingkat}
+              {result.emoji} {shortSkin}
             </span>
             <p className="text-xl sm:text-2xl font-bold text-ink mt-1.5 sm:mt-2">{result.confidence}%</p>
-            <p className="text-stone-400 text-[10px] sm:text-xs">cocok dengan gambar</p>
+            <p className="text-stone-400 text-[10px] sm:text-xs">Fit for this photo</p>
           </div>
         </div>
         <div className="h-1 bg-stone-100 rounded-full mb-3 sm:mb-4 overflow-hidden">
@@ -67,11 +66,11 @@ export default function ResultCard({ result }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="card-sm p-4 sm:p-5">
-          <span className="label-section block mb-2 sm:mb-3">Gambaran lain yang mungkin</span>
+          <span className="label-section block mb-2 sm:mb-3">Other possibilities</span>
           <div className="space-y-0.5">
             {probArr.map(([cls, val]) => (
               <ProbBar key={cls}
-                       label={NAMA_JENIS[cls] ?? cls}
+                       label={SKIN_LABEL[cls] ?? cls}
                        value={val}
                        isTop={cls === result.skin_type}
                        barClass={cfg.bar} />
@@ -80,7 +79,7 @@ export default function ResultCard({ result }) {
         </div>
         <div className="card-sm p-4 sm:p-5">
           <span className="label-section flex items-center gap-1.5 mb-2 sm:mb-3">
-            <IconLeaf className="w-3.5 h-3.5" /> Bahan yang boleh dicoba
+            <IconLeaf className="w-3.5 h-3.5" /> Ingredients worth trying
           </span>
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {result.ingredients?.map((ing, i) => (
@@ -92,7 +91,7 @@ export default function ResultCard({ result }) {
 
       {result.tips?.length > 0 && (
         <div className="card p-4 sm:p-6">
-          <span className="label-section block mb-3 sm:mb-4">Saran perawatan sehari-hari</span>
+          <span className="label-section block mb-3 sm:mb-4">Daily care ideas</span>
           <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
             {result.tips.map((tip, i) => (
               <div key={i} className="flex gap-2.5 sm:gap-3 items-start bg-stone-50 rounded-xl sm:rounded-2xl p-2.5 sm:p-3">
@@ -107,7 +106,7 @@ export default function ResultCard({ result }) {
         </div>
       )}
 
-      <p className="text-stone-300 text-xs text-right">Sudah dibaca untukmu ✓</p>
+      <p className="text-stone-300 text-xs text-right">You’re all set ✓</p>
     </div>
   );
 }

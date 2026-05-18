@@ -13,44 +13,44 @@ const API_URL = import.meta.env.VITE_API_URL
 const FEATURES = [
   {
     icon: <IconZap className="w-5 h-5" />,
-    title: "Langsung dapat jawaban",
-    desc: "Kirim satu foto dan lihat kemungkinan jenis kulitmu dalam beberapa detik.",
+    title: "Answers quickly",
+    desc: "Share one selfie and see a likely skin type in seconds.",
   },
   {
     icon: <IconSparkle className="w-5 h-5" />,
-    title: "Bantuan ringkas dari foto",
-    desc: "Dermiq membantu melihat cara kulit berdasarkan gambar yang kamu kirim.",
+    title: "Based on your photo",
+    desc: "Dermiq looks at how your skin appears in the picture you send.",
   },
   {
     icon: <IconLeaf className="w-5 h-5" />,
-    title: "Saran cocok untukmu",
-    desc: "Kami sajikan panduan rutinitas dan bahan perawatan yang umum digunakan.",
+    title: "Ideas tailored to you",
+    desc: "We suggest simple routines and ingredients people often try at home.",
   },
   {
     icon: <IconShield className="w-5 h-5" />,
-    title: "Privasi lebih tenang",
-    desc: "Foto dipakai hanya untuk membaca kulit kamu sekarang ini, tidak disimpan bersama nama akun apa pun.",
+    title: "Privacy minded",
+    desc: "Your photo is only used for this check—it isn’t kept with your name on our side.",
   },
 ];
 
 const SKIN_TYPES = [
-  { key: "dry",    tag: "Rasa kering",     emoji: "🌿", label: "Kulit Kering",     desc: "Terasa kencang, mudah mengelupas, pori-pori kecil." },
-  { key: "normal", tag: "Umumnya seimbang", emoji: "✦",  label: "Kulit Normal",     desc: "Seimbang, lembap, pori-pori halus, jarang bermasalah." },
-  { key: "oily",   tag: "Rentan mengkilap", emoji: "💧", label: "Kulit Berminyak",  desc: "Dahi, hidung, dan dagu cenderung mengkilap, pori-pori terlihat lebih besar, lebih rentan komedo." },
+  { key: "dry",    tag: "Often feels tight",   emoji: "🌿", label: "Dry skin",      desc: "Can feel tight, flaky, smaller-looking pores." },
+  { key: "normal", tag: "Fairly balanced",     emoji: "✦",  label: "Normal skin",   desc: "Balanced moisture, finer pores, few issues." },
+  { key: "oily",   tag: "Shine‑prone",         emoji: "💧", label: "Oily skin",     desc: "Forehead, nose, and chin tend to look shiny with more visible pores and clogged bumps." },
 ];
 
 const HOW = [
-  { num: "01", title: "Kirim foto wajah",     desc: "Ambil foto tampak depan, dengan cahaya merata tanpa berlebihan ketajaman edit." },
-  { num: "02", title: "Dermiq membacanya",       desc: "Kami melihat kecenderungan dari gambar wajah yang kamu kirim." },
-  { num: "03", title: "Baca ringkasannya",       desc: "Lihat kesimpulan santai serta ide perawatan sehari-hari yang bisa kamu coba sendiri." },
+  { num: "01", title: "Add a photo",        desc: "Face the camera straight on, soft even light, minimal editing." },
+  { num: "02", title: "We read your image", desc: "We look for common patterns seen in selfies like yours." },
+  { num: "03", title: "See gentle guidance",desc: "Review a calm summary plus everyday routine ideas." },
 ];
 
 const FAQS = [
-  { q: "Seberapa tepat perkiraannya?",         a: "Ini bersifat pembantu di rumah, bukan seperti pemeriksaan di klinik. Kalau kulit bermasalah serius atau tidak pasti, tanya ahli kulit langsung lebih aman." },
-  { q: "Apakah foto saya disimpan?",                 a: "Setelah pembacaan selesai, foto tidak lagi disimpan bersama nama kamu. Kami perlakukan ini sebagai layanan santai satu kali lihat." },
-  { q: "Foto dari mana saja bisa?",             a: "Sebaiknya gambar seperti biasanya dari HP—tidak boleh terlalu gelap atau terpotong besar-bagiannya." },
-  { q: "Foto seperti apa biar lebih jelas?", a: "Wajah penuh ke depan, tanpa penyaringan warna, dan pencayaan tidak silau dari belakang." },
-  { q: "Apakah bisa menggantikan dokter kulit?",         a: "Tidak bisa. Ini hanya pembantu santai untuk gambaran kulit kamu dari foto. Dokter kulit tetap menjadi arahan utama bagi masalah serius atau obat tertentu." },
+  { q: "How reliable is this?",         a: "This is a simple at-home helper, not a clinic visit. If anything worries you—or you need treatment advice—talk to a skin professional." },
+  { q: "Do you save my photo?",                 a: "After this check finishes, your photo isn’t kept with your name. Think of it as a one-off look at your picture." },
+  { q: "What kinds of pictures work?",             a: "A normal gallery shot is fine—not too dark, and your face shouldn’t be cut off." },
+  { q: "What makes the best selfie?", a: "Full face facing forward, natural color (no beauty filters), and light that doesn’t blow out your features." },
+  { q: "Can this replace my dermatologist?",         a: "No. Use Dermiq for a quick idea from a photo—your dermatologist still leads on serious concerns or prescriptions." },
 ];
 
 /* ── FAQ Item ───────────────────────────────────────────────────── */
@@ -128,14 +128,14 @@ export default function App() {
         );
       if (e.message === "UNSUPPORTED_RESPONSE" || e.message === "BAD_RESPONSE") {
         setError(
-          "Kami tidak menerima balasan seperti yang diharapkan. Coba kirim lagi dalam beberapa menit.",
+          "We couldn’t finish that request cleanly. Wait a minute and try again.",
         );
       } else if (fallback) {
         setError(
-          "Koneksi terganggu. Periksa internetmu lalu coba lagi ya.",
+          "Connection dropped. Check your internet and try again.",
         );
       } else {
-        setError("Ada kendala. Silakan coba lagi atau ganti foto yang lain.");
+        setError("Something went wrong. Try another photo.");
       }
     } finally {
       setLoading(false);
@@ -152,10 +152,10 @@ export default function App() {
   };
 
   const NAV_LINKS = [
-    { label: "Beranda",     href: "#"           },
-    { label: "Cara Kerja",  href: "#how"         },
-    { label: "Jenis Kulit", href: "#skin-types"  },
-    { label: "Tanya Jawab", href: "#faq"         },
+    { label: "Home",      href: "#"           },
+    { label: "How it works",  href: "#how"         },
+    { label: "Skin types", href: "#skin-types"  },
+    { label: "Help", href: "#faq"         },
   ];
 
   return (
@@ -190,8 +190,8 @@ export default function App() {
               className="btn-primary text-xs sm:text-sm py-2 sm:py-2.5 px-3 sm:px-5
                          inline-flex items-center gap-1.5"
             >
-              <span className="hidden sm:inline">Periksa kulitku</span>
-              <span className="sm:hidden">Periksa</span>
+              <span className="hidden sm:inline">Analyze my skin</span>
+              <span className="sm:hidden">Analyze</span>
               <IconArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </button>
             <button onClick={() => setMobileMenu(!mobileMenu)} className="lg:hidden btn-ghost p-2">
@@ -244,21 +244,21 @@ export default function App() {
             <div className="inline-flex items-center gap-2 badge-amber text-[11px] sm:text-xs
                             mb-5 sm:mb-8 tracking-wide">
               <IconSparkle className="w-3 h-3" />
-              Didukung Dermiq
+              Powered by Dermiq
             </div>
 
             {/* Headline */}
             <h1 className="font-bold text-[2.25rem] sm:text-5xl md:text-6xl lg:text-7xl
                            text-ink leading-[1.1] tracking-tight mb-4 sm:mb-6">
-              Kenali Kulitmu,<br />
-              <span className="text-amber">Rawat dengan Tepat.</span>
+              Understand your skin,<br />
+              <span className="text-amber">care with confidence.</span>
             </h1>
 
             {/* Sub */}
             <p className="text-stone-500 text-sm sm:text-base md:text-lg lg:text-xl
                           max-w-xl mx-auto leading-relaxed mb-7 sm:mb-10 px-2">
-              Tambahkan satu foto wajah untuk melihat ringkasan santai mengenai tipe kulit
-              serta ide perawatan yang cocok digunakan di rumah.
+              Add one clear face photo to see an easy‑to‑read take on skin type
+              plus care ideas that fit everyday life at home.
             </p>
 
             {/* CTAs */}
@@ -269,12 +269,12 @@ export default function App() {
                 className="btn-primary text-sm sm:text-base flex items-center justify-center gap-2
                            px-5 sm:px-8 py-3 sm:py-3.5 rounded-lg"
               >
-                Gunakan sekarang <IconArrowRight />
+                Get started <IconArrowRight />
               </button>
               <a href="#how"
                  className="btn-outline text-sm sm:text-base flex items-center justify-center gap-2
                             px-5 sm:px-8 py-3 sm:py-3.5">
-                Pelajari Cara Kerja <IconArrowDown className="w-4 h-4" />
+                See how it works <IconArrowDown className="w-4 h-4" />
               </a>
             </div>
 
@@ -284,9 +284,9 @@ export default function App() {
                             border border-stone-200 bg-white/80 rounded-2xl
                             px-4 sm:px-8 py-3 sm:py-4 text-sm w-full sm:w-auto">
               {[
-                ["3 pola", "Kulit kering • normal • berminyak"],
-                ["Sepantasnya", "Cukup sebentar"],
-                ["Tanpa bayar",  "Tanpa buat akun"],
+                ["3 moods", "Dry • normal • oily"],
+                ["Fast enough", "Just moments"],
+                ["Free today", "No account needed"],
               ].map(([val, lbl]) => (
                 <div key={val} className="text-center">
                   <p className="font-bold text-ink text-sm sm:text-base">{val}</p>
@@ -303,9 +303,9 @@ export default function App() {
         <section id="features" className="bg-white border-y border-stone-200 py-12 sm:py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-8 sm:mb-12">
-              <span className="label-section">Keunggulan</span>
+              <span className="label-section">Highlights</span>
               <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-                Mengapa Dermiq?
+                Why people try Dermiq
               </h2>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -329,9 +329,9 @@ export default function App() {
         ════════════════════════════════════════════════════ */}
         <section id="how" className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
           <div className="text-center mb-8 sm:mb-14">
-            <span className="label-section">Cara Kerja</span>
+            <span className="label-section">How it works</span>
             <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-              3 Langkah Mudah
+              Three relaxed steps
             </h2>
           </div>
 
@@ -357,7 +357,7 @@ export default function App() {
           <div className="text-center mt-8 sm:mt-10">
             <button onClick={scrollToAnalyze}
                     className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base">
-              Mulai sekarang <IconArrowRight />
+              Start now <IconArrowRight />
             </button>
           </div>
         </section>
@@ -368,12 +368,12 @@ export default function App() {
         <section id="skin-types" className="bg-white border-y border-stone-200 py-12 sm:py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-8 sm:mb-14">
-              <span className="label-section">Jenis Kulit</span>
+              <span className="label-section">Skin types</span>
               <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-                Dermiq Mengenali Jenis Kulitmu
+                Common patterns we look for
               </h2>
               <p className="text-stone-400 text-xs sm:text-sm mt-2 sm:mt-3 px-4">
-                Dermiq membedakan tiga pola umum kulit dari foto seperti ini.
+                Dermiq focuses on three everyday skin vibes from selfies like yours.
               </p>
             </div>
 
@@ -398,7 +398,7 @@ export default function App() {
             <div className="text-center mt-8 sm:mt-10">
               <button onClick={scrollToAnalyze}
                       className="btn-outline inline-flex items-center gap-2 text-sm sm:text-base">
-                Temukan Jenis Kulitmu <IconArrowRight />
+                Find yours <IconArrowRight />
               </button>
             </div>
           </div>
@@ -409,12 +409,12 @@ export default function App() {
         ════════════════════════════════════════════════════ */}
         <section id="analyze" ref={analyzeRef} className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
           <div className="text-center mb-6 sm:mb-10">
-            <span className="label-section">Saat kamu nyaman</span>
+            <span className="label-section">When you’re ready</span>
             <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-              Kirim foto wajah kamu di sini
+              Share your selfie here
             </h2>
             <p className="text-stone-400 text-xs sm:text-sm mt-2 sm:mt-3">
-              Gratis sekali lihat • Tanpa bikin akun • Foto dibaca kemudian tidak disimpan atas namamu
+              Free glance • No sign‑in • Photos aren’t labeled with your name afterward
             </p>
           </div>
 
@@ -429,12 +429,12 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch sm:items-start
                                 bg-cream rounded-2xl p-4 sm:p-5 border border-stone-100">
                   <div className="relative flex-shrink-0 mx-auto sm:mx-0">
-                    <img src={preview} alt="Preview"
+                    <img src={preview} alt="Your photo preview"
                          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded-xl
                                     border border-stone-200 shadow-card" />
                     <button
                       onClick={handleReset}
-                      title="Hapus foto"
+                      title="Remove photo"
                       className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-stone-200
                                  rounded-full flex items-center justify-center text-stone-400
                                  hover:text-red-400 hover:border-red-200 shadow-sm transition-all"
@@ -447,10 +447,10 @@ export default function App() {
                     <div className="text-center sm:text-left">
                       <p className="font-semibold text-ink text-xs sm:text-sm truncate">{file.name}</p>
                       <p className="text-stone-400 text-[11px] sm:text-xs mt-0.5">
-                        Ini akan dipakai hanya sekali untuk pembacaan
+                        We only look at your picture once for this summary
                       </p>
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3 justify-center sm:justify-start">
-                        {["Gambar sampai dari kamu", "Siap dibaca"].map((t) => (
+                        {["Photo received", "Ready to analyze"].map((t) => (
                           <span key={t} className="flex items-center gap-1 text-[10px] sm:text-xs text-sage-dark
                                                     bg-sage-muted px-2 sm:px-2.5 py-1 rounded-full font-medium">
                             <IconCheck className="w-3 h-3" /> {t}
@@ -472,13 +472,13 @@ export default function App() {
                               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5"
                                       strokeDasharray="14 28" strokeLinecap="round"/>
                             </svg>
-                            Sedang menyusun ringkasan untukmu...
+                            Preparing your results…
                           </>
                         ) : (
-                          <><IconScan /> Mulai pembacaan</>
+                          <><IconScan /> Start analysis</>
                         )}
                       </button>
-                      <button onClick={handleReset} className="btn-outline">Ganti Foto</button>
+                      <button onClick={handleReset} className="btn-outline">Different photo</button>
                     </div>
                   </div>
                 </div>
@@ -500,7 +500,7 @@ export default function App() {
                   <div className="flex gap-3 items-start bg-red-50 border border-red-100 rounded-2xl p-4">
                     <span className="text-xl flex-shrink-0">⚠️</span>
                     <div>
-                      <p className="text-red-600 font-semibold text-sm">Belum bisa menyusun ringkasan</p>
+                      <p className="text-red-600 font-semibold text-sm">We couldn’t finish</p>
                       <p className="text-red-400 text-sm mt-0.5 leading-snug">{error}</p>
                     </div>
                     <button onClick={() => setError("")} className="ml-auto text-red-300 hover:text-red-500">
@@ -516,7 +516,7 @@ export default function App() {
                   <div className="text-center pt-2">
                     <button onClick={handleReset}
                             className="btn-outline inline-flex items-center gap-2 text-sm">
-                      Lihat foto lain
+                      Try another photo
                     </button>
                   </div>
                 )}
@@ -531,9 +531,9 @@ export default function App() {
         <section id="faq" className="bg-white border-t border-stone-200 py-12 sm:py-20">
           <div className="max-w-2xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-8 sm:mb-12">
-              <span className="label-section">Tanya jawab santai</span>
+              <span className="label-section">Questions</span>
               <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-                Pertanyaan Umum
+                Answers people ask for first
               </h2>
             </div>
             <div className="divide-y divide-stone-100">
@@ -542,7 +542,7 @@ export default function App() {
             <div className="text-center mt-8 sm:mt-12">
               <button onClick={scrollToAnalyze}
                       className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base">
-                Mari coba lagi <IconArrowRight />
+                Try again <IconArrowRight />
               </button>
             </div>
           </div>
@@ -561,21 +561,21 @@ export default function App() {
               <div className="mb-3 sm:mb-4">
                 <LogoDermiq boxSize={36} dark={true} />
               </div>
-              <p className="text-stone-400 text-xs sm:text-sm leading-relaxed">
-                Kenali jenis kulitmu dan temukan rutinitas perawatan yang paling cocok untukmu.
+                <p className="text-stone-400 text-xs sm:text-sm leading-relaxed">
+                Learn your everyday skin tendencies and routines that tend to suit them well.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-2 text-sm">
               <div className="flex flex-col gap-2 sm:gap-2.5">
-                <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Navigasi</p>
-                {[["Cara Kerja","#how"],["Jenis Kulit","#skin-types"],["Tanya Jawab","#faq"]].map(([l,h]) => (
+                <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Explore</p>
+                {[["How it works","#how"],["Skin types","#skin-types"],["Help","#faq"]].map(([l,h]) => (
                   <a key={l} href={h} className="text-stone-400 text-xs sm:text-sm hover:text-amber transition-colors">{l}</a>
                 ))}
               </div>
               <div className="flex flex-col gap-2 sm:gap-2.5">
-                <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Layanan</p>
-                {[["Periksa kulitku","#analyze"],["Cerita lebih","#features"]].map(([l,h]) => (
+                <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Services</p>
+                {[["Analyze skin","#analyze"],["Discover more","#features"]].map(([l,h]) => (
                   <a key={l} href={h} className="text-stone-400 text-xs sm:text-sm hover:text-amber transition-colors">{l}</a>
                 ))}
               </div>
@@ -585,8 +585,8 @@ export default function App() {
           <div className="border-t border-stone-800 mt-6 sm:mt-10 pt-4 sm:pt-6 flex flex-col md:flex-row
                            items-center justify-between gap-2 sm:gap-3 text-[11px] sm:text-xs
                            text-stone-600 text-center md:text-left">
-            <p>© 2026 Dermiq. Hak cipta dilindungi.</p>
-            <p>Ringkasan di sini hanya pembantu santai dari foto, tetap bergantung kepada saran ahli kulit kalau kulit bermasalah.</p>
+            <p>© 2026 Dermiq. All rights reserved.</p>
+            <p>This page offers friendly guidance only—talk to your dermatologist whenever something worries you clinically.</p>
           </div>
         </div>
       </footer>
