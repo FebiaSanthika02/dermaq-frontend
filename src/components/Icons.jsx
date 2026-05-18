@@ -49,7 +49,7 @@ export function LogoDermiq({ boxSize = 42, dark = false }) {
         </p>
         <p style={{ fontSize: boxSize * 0.205, letterSpacing: "0.14em" }}
            className="uppercase font-semibold text-stone-400 mt-0.5">
-          Skin Care
+          Perawatan Kulit
         </p>
       </div>
 

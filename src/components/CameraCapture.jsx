@@ -32,7 +32,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
       stopStream();
 
       if (!navigator.mediaDevices?.getUserMedia) {
-        setError("Browser tidak mendukung akses kamera.");
+        setError("Perangkat ini tidak bisa membuka kamera lewat halaman ini. Pakai “Pilih dari galeri” saja.");
         return;
       }
 
@@ -56,10 +56,10 @@ export default function CameraCapture({ open, onClose, onCapture }) {
       } catch (e) {
         setError(
           e.name === "NotAllowedError"
-            ? "Akses kamera ditolak. Izinkan akses kamera lalu coba lagi."
+            ? "Akses kamera ditolak. Izinkan kamera untuk situs ini, lalu coba lagi."
             : e.name === "NotFoundError"
-            ? "Tidak ada kamera yang tersedia di perangkat ini."
-            : "Gagal mengakses kamera: " + (e.message ?? "unknown error"),
+            ? "Tidak ada kamera yang terlihat di perangkat ini."
+            : "Ada kendala saat membuka kamera. Tutup lalu coba lagi.",
         );
       }
     }
@@ -117,7 +117,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
         0.92,
       );
     } catch (e) {
-      setError("Gagal mengambil foto: " + e.message);
+      setError("Foto tidak tersimpan. Tutup lalu coba lagi.");
       setShooting(false);
     }
   }
@@ -132,7 +132,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* ── Topbar ──────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 bg-black/60 text-white">
-        <span className="text-sm font-medium">Scan Wajah</span>
+        <span className="text-sm font-medium">Ambil foto wajah</span>
         <button
           onClick={() => { stopStream(); onClose?.(); }}
           className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
@@ -166,7 +166,7 @@ export default function CameraCapture({ open, onClose, onCapture }) {
             ))}
             {/* Center hint */}
             <p className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-white/80 text-xs whitespace-nowrap">
-              Posisikan wajah dalam frame
+              letakkan wajah di dalam kotak
             </p>
           </div>
         </div>
@@ -174,13 +174,13 @@ export default function CameraCapture({ open, onClose, onCapture }) {
         {/* Status overlays */}
         {!ready && !error && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-sm">
-            Memuat kamera...
+            Menyiapkan tampilan…
           </div>
         )}
         {error && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center px-6">
             <div className="bg-white rounded-2xl p-6 max-w-sm text-center">
-              <p className="text-red-600 font-semibold text-sm mb-2">⚠️ Kamera tidak tersedia</p>
+              <p className="text-red-600 font-semibold text-sm mb-2">Kamera tidak siap</p>
               <p className="text-stone-600 text-sm">{error}</p>
               <button onClick={onClose} className="btn-outline mt-4 text-sm">Tutup</button>
             </div>

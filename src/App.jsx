@@ -13,44 +13,44 @@ const API_URL = import.meta.env.VITE_API_URL
 const FEATURES = [
   {
     icon: <IconZap className="w-5 h-5" />,
-    title: "Hasil Instan",
-    desc: "Upload foto dan dapatkan hasil analisis dalam hitungan detik.",
+    title: "Langsung dapat jawaban",
+    desc: "Kirim satu foto dan lihat kemungkinan jenis kulitmu dalam beberapa detik.",
   },
   {
     icon: <IconSparkle className="w-5 h-5" />,
-    title: "Teknologi AI",
-    desc: "Dilatih khusus untuk mengenali kondisi kulit wajah secara akurat.",
+    title: "Bantuan ringkas dari foto",
+    desc: "Dermiq membantu melihat cara kulit berdasarkan gambar yang kamu kirim.",
   },
   {
     icon: <IconLeaf className="w-5 h-5" />,
-    title: "Saran Personal",
-    desc: "Rekomendasi bahan skincare yang cocok dengan jenis kulitmu.",
+    title: "Saran cocok untukmu",
+    desc: "Kami sajikan panduan rutinitas dan bahan perawatan yang umum digunakan.",
   },
   {
     icon: <IconShield className="w-5 h-5" />,
-    title: "Privasi Terjaga",
-    desc: "Foto tidak disimpan. Diproses langsung dan dihapus setelahnya.",
+    title: "Privasi lebih tenang",
+    desc: "Foto dipakai hanya untuk membaca kulit kamu sekarang ini, tidak disimpan bersama nama akun apa pun.",
   },
 ];
 
 const SKIN_TYPES = [
-  { key: "dry",    emoji: "🌿", label: "Kulit Kering",     desc: "Terasa kencang, mudah mengelupas, pori-pori kecil." },
-  { key: "normal", emoji: "✦",  label: "Kulit Normal",     desc: "Seimbang, lembap, pori-pori halus, jarang bermasalah." },
-  { key: "oily",   emoji: "💧", label: "Kulit Berminyak",  desc: "Zona T mengkilap, pori-pori besar, rentan jerawat." },
+  { key: "dry",    tag: "Rasa kering",     emoji: "🌿", label: "Kulit Kering",     desc: "Terasa kencang, mudah mengelupas, pori-pori kecil." },
+  { key: "normal", tag: "Umumnya seimbang", emoji: "✦",  label: "Kulit Normal",     desc: "Seimbang, lembap, pori-pori halus, jarang bermasalah." },
+  { key: "oily",   tag: "Rentan mengkilap", emoji: "💧", label: "Kulit Berminyak",  desc: "Dahi, hidung, dan dagu cenderung mengkilap, pori-pori terlihat lebih besar, lebih rentan komedo." },
 ];
 
 const HOW = [
-  { num: "01", title: "Upload Foto Wajah",    desc: "Ambil foto tampak depan, pencahayaan merata, tanpa filter." },
-  { num: "02", title: "AI Menganalisis",       desc: "Sistem membaca kondisi kulitmu dan mengenali jenis kulitmu." },
-  { num: "03", title: "Terima Hasilnya",       desc: "Lihat jenis kulit beserta tips perawatan yang sesuai untukmu." },
+  { num: "01", title: "Kirim foto wajah",     desc: "Ambil foto tampak depan, dengan cahaya merata tanpa berlebihan ketajaman edit." },
+  { num: "02", title: "Dermiq membacanya",       desc: "Kami melihat kecenderungan dari gambar wajah yang kamu kirim." },
+  { num: "03", title: "Baca ringkasannya",       desc: "Lihat kesimpulan santai serta ide perawatan sehari-hari yang bisa kamu coba sendiri." },
 ];
 
 const FAQS = [
-  { q: "Seberapa akurat hasil analisisnya?",         a: "Model mencapai akurasi ~75–80% pada data uji. Hasil bersifat indikatif — konfirmasi dengan konsultasi profesional untuk keputusan penting." },
-  { q: "Apakah foto saya disimpan?",                 a: "Tidak. Foto diproses langsung di server dan tidak tersimpan dalam bentuk apapun setelah analisis selesai." },
-  { q: "Format foto apa yang didukung?",             a: "JPG, PNG, dan WebP dengan ukuran maksimum 10 MB." },
-  { q: "Foto seperti apa yang memberikan hasil terbaik?", a: "Foto wajah tampak depan tanpa filter, pencahayaan merata, dan resolusi minimal 300×300 piksel." },
-  { q: "Apakah ini pengganti dokter kulit?",         a: "Tidak. Dermiq membantu mengenal kondisi kulitmu, bukan pengganti saran dokter. Untuk masalah serius, kunjungi dokter kulit." },
+  { q: "Seberapa tepat perkiraannya?",         a: "Ini bersifat pembantu di rumah, bukan seperti pemeriksaan di klinik. Kalau kulit bermasalah serius atau tidak pasti, tanya ahli kulit langsung lebih aman." },
+  { q: "Apakah foto saya disimpan?",                 a: "Setelah pembacaan selesai, foto tidak lagi disimpan bersama nama kamu. Kami perlakukan ini sebagai layanan santai satu kali lihat." },
+  { q: "Foto dari mana saja bisa?",             a: "Sebaiknya gambar seperti biasanya dari HP—tidak boleh terlalu gelap atau terpotong besar-bagiannya." },
+  { q: "Foto seperti apa biar lebih jelas?", a: "Wajah penuh ke depan, tanpa penyaringan warna, dan pencayaan tidak silau dari belakang." },
+  { q: "Apakah bisa menggantikan dokter kulit?",         a: "Tidak bisa. Ini hanya pembantu santai untuk gambaran kulit kamu dari foto. Dokter kulit tetap menjadi arahan utama bagi masalah serius atau obat tertentu." },
 ];
 
 /* ── FAQ Item ───────────────────────────────────────────────────── */
@@ -106,11 +106,37 @@ export default function App() {
     form.append("file", file);
     try {
       const res  = await fetch(`${API_URL}/analyze`, { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail ?? "Terjadi kesalahan pada server.");
+      const raw  = await res.text();
+
+      let data;
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        throw new Error("UNSUPPORTED_RESPONSE");
+      }
+
+      if (!res.ok || !data) {
+        throw new Error("BAD_RESPONSE");
+      }
       setResult(data);
     } catch (e) {
-      setError(e.message || "Gagal terhubung ke server. Pastikan backend sudah berjalan di port 8000.");
+      const fallback =
+        typeof e.message === "string" && (
+          e.message.includes("fetch") ||
+          e.message.includes("Failed to fetch") ||
+          e.message.includes("NetworkError")
+        );
+      if (e.message === "UNSUPPORTED_RESPONSE" || e.message === "BAD_RESPONSE") {
+        setError(
+          "Kami tidak menerima balasan seperti yang diharapkan. Coba kirim lagi dalam beberapa menit.",
+        );
+      } else if (fallback) {
+        setError(
+          "Koneksi terganggu. Periksa internetmu lalu coba lagi ya.",
+        );
+      } else {
+        setError("Ada kendala. Silakan coba lagi atau ganti foto yang lain.");
+      }
     } finally {
       setLoading(false);
     }
@@ -129,7 +155,7 @@ export default function App() {
     { label: "Beranda",     href: "#"           },
     { label: "Cara Kerja",  href: "#how"         },
     { label: "Jenis Kulit", href: "#skin-types"  },
-    { label: "FAQ",         href: "#faq"         },
+    { label: "Tanya Jawab", href: "#faq"         },
   ];
 
   return (
@@ -164,8 +190,8 @@ export default function App() {
               className="btn-primary text-xs sm:text-sm py-2 sm:py-2.5 px-3 sm:px-5
                          inline-flex items-center gap-1.5"
             >
-              <span className="hidden sm:inline">Analisis Kulit</span>
-              <span className="sm:hidden">Analisis</span>
+              <span className="hidden sm:inline">Periksa kulitku</span>
+              <span className="sm:hidden">Periksa</span>
               <IconArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </button>
             <button onClick={() => setMobileMenu(!mobileMenu)} className="lg:hidden btn-ghost p-2">
@@ -218,7 +244,7 @@ export default function App() {
             <div className="inline-flex items-center gap-2 badge-amber text-[11px] sm:text-xs
                             mb-5 sm:mb-8 tracking-wide">
               <IconSparkle className="w-3 h-3" />
-              Didukung Kecerdasan Buatan
+              Didukung Dermiq
             </div>
 
             {/* Headline */}
@@ -231,8 +257,8 @@ export default function App() {
             {/* Sub */}
             <p className="text-stone-500 text-sm sm:text-base md:text-lg lg:text-xl
                           max-w-xl mx-auto leading-relaxed mb-7 sm:mb-10 px-2">
-              Upload foto wajahmu dan dapatkan analisis jenis kulit secara instan
-              beserta rekomendasi perawatan yang dipersonalisasi.
+              Tambahkan satu foto wajah untuk melihat ringkasan santai mengenai tipe kulit
+              serta ide perawatan yang cocok digunakan di rumah.
             </p>
 
             {/* CTAs */}
@@ -243,7 +269,7 @@ export default function App() {
                 className="btn-primary text-sm sm:text-base flex items-center justify-center gap-2
                            px-5 sm:px-8 py-3 sm:py-3.5 rounded-lg"
               >
-                Gunakan Layanan Sekarang <IconArrowRight />
+                Gunakan sekarang <IconArrowRight />
               </button>
               <a href="#how"
                  className="btn-outline text-sm sm:text-base flex items-center justify-center gap-2
@@ -258,9 +284,9 @@ export default function App() {
                             border border-stone-200 bg-white/80 rounded-2xl
                             px-4 sm:px-8 py-3 sm:py-4 text-sm w-full sm:w-auto">
               {[
-                ["3 Jenis", "Terdeteksi AI"],
-                ["< 3 Detik", "Analisis"],
-                ["Gratis",  "Tanpa Daftar"],
+                ["3 pola", "Kulit kering • normal • berminyak"],
+                ["Sepantasnya", "Cukup sebentar"],
+                ["Tanpa bayar",  "Tanpa buat akun"],
               ].map(([val, lbl]) => (
                 <div key={val} className="text-center">
                   <p className="font-bold text-ink text-sm sm:text-base">{val}</p>
@@ -331,7 +357,7 @@ export default function App() {
           <div className="text-center mt-8 sm:mt-10">
             <button onClick={scrollToAnalyze}
                     className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base">
-              Mulai Analisis <IconArrowRight />
+              Mulai sekarang <IconArrowRight />
             </button>
           </div>
         </section>
@@ -347,20 +373,20 @@ export default function App() {
                 Dermiq Mengenali Jenis Kulitmu
               </h2>
               <p className="text-stone-400 text-xs sm:text-sm mt-2 sm:mt-3 px-4">
-                Sistem AI kami mampu membedakan 3 kondisi kulit wajah utama
+                Dermiq membedakan tiga pola umum kulit dari foto seperti ini.
               </p>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-3 sm:gap-6">
-              {SKIN_TYPES.map((s, i) => (
+              {SKIN_TYPES.map((s) => (
                 <div key={s.key}
                      className="p-5 sm:p-8 rounded-2xl border border-stone-200 bg-cream-100
                                 hover:border-amber/30 hover:shadow-lift transition-all duration-300">
                   <div className="text-3xl sm:text-4xl mb-3 sm:mb-5">{s.emoji}</div>
                   <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber inline-block" />
-                    <span className="text-[10px] sm:text-xs font-semibold text-stone-400 uppercase tracking-widest">
-                      {["Dry", "Normal", "Oily"][i]}
+                    <span className="text-[10px] sm:text-xs font-semibold text-stone-400 tracking-wide">
+                      {s.tag}
                     </span>
                   </div>
                   <h3 className="font-bold text-ink text-lg sm:text-xl mb-2 sm:mb-3">{s.label}</h3>
@@ -383,12 +409,12 @@ export default function App() {
         ════════════════════════════════════════════════════ */}
         <section id="analyze" ref={analyzeRef} className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
           <div className="text-center mb-6 sm:mb-10">
-            <span className="label-section">Analisis Sekarang</span>
+            <span className="label-section">Saat kamu nyaman</span>
             <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
-              Upload Foto Wajahmu
+              Kirim foto wajah kamu di sini
             </h2>
             <p className="text-stone-400 text-xs sm:text-sm mt-2 sm:mt-3">
-              Gratis · Tanpa daftar · Privasi terjaga
+              Gratis sekali lihat • Tanpa bikin akun • Foto dibaca kemudian tidak disimpan atas namamu
             </p>
           </div>
 
@@ -421,10 +447,10 @@ export default function App() {
                     <div className="text-center sm:text-left">
                       <p className="font-semibold text-ink text-xs sm:text-sm truncate">{file.name}</p>
                       <p className="text-stone-400 text-[11px] sm:text-xs mt-0.5">
-                        {(file.size / 1024).toFixed(0)} KB · {file.type.split("/")[1].toUpperCase()}
+                        Ini akan dipakai hanya sekali untuk pembacaan
                       </p>
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3 justify-center sm:justify-start">
-                        {["Foto diterima", "Siap dianalisis"].map((t) => (
+                        {["Gambar sampai dari kamu", "Siap dibaca"].map((t) => (
                           <span key={t} className="flex items-center gap-1 text-[10px] sm:text-xs text-sage-dark
                                                     bg-sage-muted px-2 sm:px-2.5 py-1 rounded-full font-medium">
                             <IconCheck className="w-3 h-3" /> {t}
@@ -446,10 +472,10 @@ export default function App() {
                               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5"
                                       strokeDasharray="14 28" strokeLinecap="round"/>
                             </svg>
-                            Menganalisis...
+                            Sedang menyusun ringkasan untukmu...
                           </>
                         ) : (
-                          <><IconScan /> Analisis Kulit</>
+                          <><IconScan /> Mulai pembacaan</>
                         )}
                       </button>
                       <button onClick={handleReset} className="btn-outline">Ganti Foto</button>
@@ -474,7 +500,7 @@ export default function App() {
                   <div className="flex gap-3 items-start bg-red-50 border border-red-100 rounded-2xl p-4">
                     <span className="text-xl flex-shrink-0">⚠️</span>
                     <div>
-                      <p className="text-red-600 font-semibold text-sm">Analisis Gagal</p>
+                      <p className="text-red-600 font-semibold text-sm">Belum bisa menyusun ringkasan</p>
                       <p className="text-red-400 text-sm mt-0.5 leading-snug">{error}</p>
                     </div>
                     <button onClick={() => setError("")} className="ml-auto text-red-300 hover:text-red-500">
@@ -490,7 +516,7 @@ export default function App() {
                   <div className="text-center pt-2">
                     <button onClick={handleReset}
                             className="btn-outline inline-flex items-center gap-2 text-sm">
-                      Analisis Foto Lain
+                      Lihat foto lain
                     </button>
                   </div>
                 )}
@@ -505,7 +531,7 @@ export default function App() {
         <section id="faq" className="bg-white border-t border-stone-200 py-12 sm:py-20">
           <div className="max-w-2xl mx-auto px-4 sm:px-6">
             <div className="text-center mb-8 sm:mb-12">
-              <span className="label-section">FAQ</span>
+              <span className="label-section">Tanya jawab santai</span>
               <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-ink mt-2 sm:mt-3 tracking-tight">
                 Pertanyaan Umum
               </h2>
@@ -516,7 +542,7 @@ export default function App() {
             <div className="text-center mt-8 sm:mt-12">
               <button onClick={scrollToAnalyze}
                       className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base">
-                Coba Analisis Sekarang <IconArrowRight />
+                Mari coba lagi <IconArrowRight />
               </button>
             </div>
           </div>
@@ -543,13 +569,13 @@ export default function App() {
             <div className="grid grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-2 text-sm">
               <div className="flex flex-col gap-2 sm:gap-2.5">
                 <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Navigasi</p>
-                {[["Cara Kerja","#how"],["Jenis Kulit","#skin-types"],["FAQ","#faq"]].map(([l,h]) => (
+                {[["Cara Kerja","#how"],["Jenis Kulit","#skin-types"],["Tanya Jawab","#faq"]].map(([l,h]) => (
                   <a key={l} href={h} className="text-stone-400 text-xs sm:text-sm hover:text-amber transition-colors">{l}</a>
                 ))}
               </div>
               <div className="flex flex-col gap-2 sm:gap-2.5">
                 <p className="text-stone-500 text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-1">Layanan</p>
-                {[["Analisis Kulit","#analyze"],["Tentang Kami","#features"]].map(([l,h]) => (
+                {[["Periksa kulitku","#analyze"],["Cerita lebih","#features"]].map(([l,h]) => (
                   <a key={l} href={h} className="text-stone-400 text-xs sm:text-sm hover:text-amber transition-colors">{l}</a>
                 ))}
               </div>
@@ -560,7 +586,7 @@ export default function App() {
                            items-center justify-between gap-2 sm:gap-3 text-[11px] sm:text-xs
                            text-stone-600 text-center md:text-left">
             <p>© 2026 Dermiq. Hak cipta dilindungi.</p>
-            <p>Hasil analisis bersifat panduan, bukan pengganti saran dokter kulit.</p>
+            <p>Ringkasan di sini hanya pembantu santai dari foto, tetap bergantung kepada saran ahli kulit kalau kulit bermasalah.</p>
           </div>
         </div>
       </footer>

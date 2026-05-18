@@ -11,11 +11,11 @@ export default function UploadZone({ onFileSelect, disabled }) {
   const inputRef                       = useRef();
 
   const validate = (file) => {
-    if (!file) return "Tidak ada file yang dipilih.";
+    if (!file) return "Belum ada foto yang dipilih.";
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type))
-      return "Format tidak didukung. Gunakan JPG, PNG, atau WebP.";
+      return "Mohon pilih foto seperti biasa dari galeri atau kamera telepon.";
     if (file.size > MAX_MB * 1024 * 1024)
-      return `Ukuran file melebihi ${MAX_MB} MB.`;
+      return "Ukurannya terlalu besar. Pilih foto lain yang lebih ringan.";
     return null;
   };
 
@@ -49,7 +49,6 @@ export default function UploadZone({ onFileSelect, disabled }) {
           ${disabled ? "opacity-50 pointer-events-none" : ""}
         `}
       >
-        {/* Icon */}
         <div className={`
           w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center
           transition-all duration-300
@@ -58,20 +57,18 @@ export default function UploadZone({ onFileSelect, disabled }) {
           <IconCamera className="w-7 h-7 sm:w-9 sm:h-9" />
         </div>
 
-        {/* Text */}
         <div>
           <p className="text-ink font-semibold text-sm sm:text-base mb-1">
-            {dragging ? "Lepaskan foto di sini" : "Upload foto wajahmu"}
+            {dragging ? "Lepaskan foto di sini" : "Tambahkan foto wajah"}
           </p>
           <p className="text-stone-400 text-xs sm:text-sm">
-            <span className="hidden sm:inline">Seret & lepas, atau</span>
-            <span className="sm:hidden">Tap salah satu tombol di bawah</span>
-            <span className="hidden sm:inline"> klik untuk memilih</span>
+            <span className="hidden sm:inline">Seret ke sini atau</span>
+            <span className="sm:hidden">Pilih salah satu cara di bawah</span>
+            <span className="hidden sm:inline"> pilih dari perangkatmu</span>
           </p>
-          <p className="text-stone-300 text-xs mt-1">JPG · PNG · WebP · Maks {MAX_MB} MB</p>
+          <p className="text-stone-300 text-xs mt-1">Foto biasa dari galeri · Ukuran harus ringan</p>
         </div>
 
-        {/* Action buttons — Pilih File + Buka Kamera */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             type="button"
@@ -79,7 +76,7 @@ export default function UploadZone({ onFileSelect, disabled }) {
             onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           >
             <IconUpload className="w-4 h-4" />
-            Pilih Foto
+            Pilih dari galeri
           </button>
 
           <button
@@ -89,13 +86,12 @@ export default function UploadZone({ onFileSelect, disabled }) {
             onClick={(e) => { e.stopPropagation(); setCameraOpen(true); }}
           >
             <IconCameraOn className="w-4 h-4" />
-            Buka Kamera
+            Scan kulit
           </button>
         </div>
 
-        {/* Tips chips */}
         <div className="flex gap-2 flex-wrap justify-center">
-          {["💡 Cahaya terang", "👁 Tampak depan", "🚫 Tanpa filter"].map((t) => (
+          {["Cahaya terang", "Wajah menghadap kamera", "Tanpa filter"].map((t) => (
             <span key={t} className="badge-stone text-[11px] sm:text-xs">{t}</span>
           ))}
         </div>
